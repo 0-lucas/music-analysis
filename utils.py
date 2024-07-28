@@ -54,8 +54,8 @@ def plot_periodogram(ts: pd.Series, detrend='linear', ax=None):
 
 
 def test_augmented_df(series: pd.Series) -> None:
-	adf = sm.tsa.adfuller(series,autolag=None, maxlag=4)
-	print("adf : ",adf[0])
+	adf = sm.tsa.adfuller(series, autolag=None, maxlag=4)
+	print("adf : ", adf[0])
 	print("p-value : ", adf[1])
 
 
