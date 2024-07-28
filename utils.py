@@ -4,19 +4,20 @@ import matplotlib.pyplot as plt
 import statsmodels.api as sm
 from statsmodels.tsa.arima.model import ARIMA
 
+
 def read_csv_properly(path: str) -> pd.DataFrame:
 	data = pd.read_csv(path, usecols=["utc_time", "artist", "album", "track"]
-		).rename(columns={"utc_time": "date_played"})
-
+	                   ).rename(columns={"utc_time": "date_played"})
+	
 	data["date_played"] = pd.to_datetime(
 		data["date_played"], format="%d %b %Y, %H:%M")
-
+	
 	return data
 
 
 def get_music_time_series(data: pd.DataFrame, frequency: str) -> pd.Series:
 	data = data.set_index("date_played").groupby(pd.Grouper(freq=frequency)
-		).agg({"artist": "nunique", "album": "nunique", "track": "count"})
+	                                             ).agg({"artist": "nunique", "album": "nunique", "track": "count"})
 	return data
 
 
@@ -62,14 +63,14 @@ def test_augmented_df(series: pd.Series) -> None:
 def get_optimized_arima(data: pd.Series):
 	aic = 0
 	persist_model = None
-
-	for ar_order in range(0,5):
-		for ma_order in range(1,6):
-			for diff_order in range(0,5):
+	
+	for ar_order in range(0, 5):
+		for ma_order in range(1, 6):
+			for diff_order in range(0, 5):
 				model = ARIMA(data, order=(ar_order, diff_order, ma_order)).fit()
 				
 				if model.aic < aic:
 					aic = model.aic
 					persist_model = model
-
+	
 	return persist_model
