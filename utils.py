@@ -9,10 +9,14 @@ def read_csv_properly(path: str) -> pd.DataFrame:
 	data = pd.read_csv(path, usecols=["utc_time", "artist", "album", "track"]
 	                   ).rename(columns={"utc_time": "date_played"})
 	
-	data["date_played"] = pd.to_datetime(
-		data["date_played"], format="%d %b %Y, %H:%M")
+	data["date_played"] = format_date_column(data["date_played"])
 	
 	return data
+
+
+def format_date_column(column: pd.Series) -> pd.Series:
+	column["date_played"] = pd.to_datetime(column["date_played"], format="%d %b %Y, %H:%M")
+	return column
 
 
 def get_music_time_series(data: pd.DataFrame, frequency: str) -> pd.Series:
