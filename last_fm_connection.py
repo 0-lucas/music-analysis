@@ -96,7 +96,8 @@ class LastFmConnection:
 		
 		dataframe = dataframe.map(lambda col: col["#text"] if self._is_dict_encoded(col) else col)
 		
-		dataframe = format_date_column(dataframe["date"])
+		dataframe["date"] = format_date_column(dataframe["date"])
+		dataframe = dataframe.rename(columns={"date": "date_played", "name": "track"})
 		
 		return dataframe
 	
