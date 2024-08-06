@@ -1,12 +1,6 @@
 # Music Analysis
 
-This is a entirely egotistical project where I brag about my musical taste.
-
-
-Data was retrieved from Last.fm, using [Chan's data export](https://mainstream.ghan.nl/export.)  for pure laziness of setting up the Last.fm API
-
-
-My Last.fm profile is [saintcecilla](https://www.last.fm/user/saintcecilla)
+This is an entirely egotistical project where I can appreciate my musical taste.
 
 ___
 ## Warning for the statisticians
