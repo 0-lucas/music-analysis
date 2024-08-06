@@ -7,6 +7,12 @@ import pandas as pd
 
 from music_analysis import format_date_column
 
+from dotenv import load_dotenv
+
+# ATTENTION - For development purposes only
+
+load_dotenv("secrets.env")
+
 
 class LastFmConnection:
 	def __init__(self):
@@ -51,6 +57,15 @@ class LastFmConnection:
 		
 		return response
 	
+	def check_if_user_exists(self, username: str) -> bool:
+		""" Check if username passed exists in Last.fm records """
+		response_code: int = self.get(method="user.getinfo", user=username).status_code
+		
+		if response_code == 404:
+			return False
+		
+		return True
+	
 	def _get_total_pages(self, method: str, user: str) -> int:
 		""" Method for retrieving total pages from a single call to API """
 		response_json: dict = self.get(method, user).json()
@@ -62,7 +77,7 @@ class LastFmConnection:
 		
 		return total_pages
 	
-	def get_paginated_responses(self, method: str, user: str, ) -> list[Response]:
+	def _get_paginated_responses(self, method: str, user: str, ) -> list[Response]:
 		""" Paginates requests to endpoint, to get all available pages """
 		total_pages: int = self._get_total_pages(method, user)
 		responses: list[Response] = []
@@ -97,12 +112,20 @@ class LastFmConnection:
 		
 		return dataframe
 	
-	def get_dataframe_from_pagination(self, responses: list[Response]) -> pd.DataFrame:
+	def _get_dataframe_from_pagination(self, responses: list[Response]) -> pd.DataFrame:
+		""" Returns a DataFrame from a list of responses (API pagination) """
 		dataframe: pd.DataFrame = self._build_dataframe(responses)
 		dataframe: pd.DataFrame = self._process_dataframe(dataframe)
 		
 		return dataframe
 	
+	def get_user_tracks(self, username: str) -> pd.DataFrame:
+		""" Returns a processed DataFrame containing user recent played music, with album, track name, artist and date. """
+		responses: list[Response] = self._get_paginated_responses("user.getrecenttracks", username)
+		dataframe: pd.DataFrame = self._get_dataframe_from_pagination(responses)
+		
+		return dataframe
+		
 	@staticmethod
 	def _is_dict_encoded(value: str | dict) -> bool:
 		return True if type(value) is dict else False

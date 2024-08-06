@@ -1,6 +1,4 @@
 import pandas as pd
-from scipy.signal import periodogram
-import matplotlib.pyplot as plt
 import statsmodels.api as sm
 from statsmodels.tsa.arima.model import ARIMA
 
