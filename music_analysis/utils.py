@@ -3,20 +3,27 @@ import statsmodels.api as sm
 from statsmodels.tsa.arima.model import ARIMA
 
 
-def read_csv_properly(path: str) -> pd.DataFrame:
+def read_unprocessed_csv(path: str) -> pd.DataFrame:
 	data = pd.read_csv(
 		path, usecols=["utc_time", "artist", "album", "track"]).rename(columns={"utc_time": "date_played"})
 	
-	data["date_played"] = format_date_column(data["date_played"])
+	data["date_played"] = format_unprocessed_date_column(data["date_played"])
 	
 	return data
 
 
-def format_date_column(column: pd.Series) -> pd.Series:
+def format_unprocessed_date_column(column: pd.Series) -> pd.Series:
 	column = pd.to_datetime(column, format="%d %b %Y, %H:%M")
 	
 	return column
 
+
+def read_processed_csv(path: str) -> pd.DataFrame:
+	data = pd.read_csv(path)
+	data["date_played"] = pd.to_datetime(data["date_played"], format="%Y-%m-%d %H:%M:%S")
+	data["hour_played"] = data["date_played"].dt.hour
+
+	return data
 
 def get_music_time_series(data: pd.DataFrame, frequency: str) -> pd.Series:
 	data = data.set_index("date_played").groupby(
