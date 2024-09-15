@@ -2,14 +2,14 @@ import numpy as np
 import pandas as pd
 
 
-def _add_hour_column(dataframe: pd.DataFrame, date_column: str) -> pd.DataFrame:
+def add_hour_column(dataframe: pd.DataFrame, date_column: str) -> pd.DataFrame:
 	try:
 		dataframe["hour_played"]: pd.Series[np.datetime64] = dataframe[date_column].dt.hour
 		return dataframe
 	
 	except AttributeError:  # Column was not in datetime format.
 		dataframe[date_column]: pd.Series[np.datetime64] = format_date_column(dataframe[date_column])
-		return _add_hour_column(dataframe, date_column)
+		return add_hour_column(dataframe, date_column)
 
 
 def format_date_column(column: pd.Series) -> pd.Series:
@@ -17,7 +17,7 @@ def format_date_column(column: pd.Series) -> pd.Series:
 
 
 def _process_dataframe(dataframe: pd.DataFrame) -> pd.DataFrame:
-	dataframe = _add_hour_column(dataframe, "date_played")
+	dataframe = add_hour_column(dataframe, "date_played")
 	
 	return dataframe
 

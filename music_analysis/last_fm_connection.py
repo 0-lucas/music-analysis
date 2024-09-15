@@ -5,7 +5,7 @@ from requests import Response
 
 import pandas as pd
 
-from music_analysis import format_date_column
+from music_analysis import format_date_column, add_hour_column
 
 from dotenv import load_dotenv
 
@@ -115,6 +115,7 @@ class LastFmConnection:
 		dataframe = dataframe.map(lambda col: col["#text"] if self._is_dict_encoded(col) else col)
 		
 		dataframe["date"] = format_date_column(dataframe["date"])
+		dataframe = add_hour_column(dataframe, "date")
 		dataframe = dataframe.rename(columns={"date": "date_played", "name": "track"})
 		
 		return dataframe
@@ -135,4 +136,5 @@ class LastFmConnection:
 	
 	@staticmethod
 	def _is_dict_encoded(value: str | dict) -> bool:
-		return True if type(value) is dict else False	
+		return True if type(value) is dict else False
+	
