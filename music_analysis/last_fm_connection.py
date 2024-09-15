@@ -21,13 +21,15 @@ class LastFmConnection:
 		self.headers: dict[str:str] = {"user-agent": "MusicAnalysis"}
 		self.max_tracks: int = 200
 	
-	def _build_base_payload(self, method: str, user: str) -> dict[str:str]:
+	def _build_base_payload(self, method: str, user: str | None, artist: str | None, album: str | None) -> dict[str:str]:
 		""" Returns a base payload for HTTP request depending on the method passed """
 		payload: dict[str:str] = {
 			"api_key": self.api_key,
 			"extended": 0,
 			"method": method,
 			"user": user,
+			"artist": artist,
+			"album": album,
 			"limit": self.max_tracks,
 			"format": "json"
 		}
@@ -48,9 +50,14 @@ class LastFmConnection:
 		
 		return payload
 	
-	def get(self, method: str, user: str, page: int = 1) -> Response:
+	def get(
+			self,
+			method: str, user: str | None = None,
+			album: str | None = None,
+			artist: str | None = None,
+			page: int = 1) -> Response:
 		""" Public method for making requests to Last.fm API """
-		payload: dict[str:str] = self._build_base_payload(method, user)
+		payload: dict[str:str] = self._build_base_payload(method, user, artist, album)
 		payload: dict[str:str] = self._add_pagination_to_payload(payload, page)
 		
 		response: Response = requests.get(self.endpoint, headers=self.headers, params=payload)
@@ -125,7 +132,7 @@ class LastFmConnection:
 		dataframe: pd.DataFrame = self._get_dataframe_from_pagination(responses)
 		
 		return dataframe
-		
+	
 	@staticmethod
 	def _is_dict_encoded(value: str | dict) -> bool:
-		return True if type(value) is dict else False
+		return True if type(value) is dict else False	
