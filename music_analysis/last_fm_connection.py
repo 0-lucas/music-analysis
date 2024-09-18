@@ -111,12 +111,12 @@ class LastFmConnection:
 	def _process_dataframe(self, dataframe: pd.DataFrame) -> pd.DataFrame:
 		""" Removes unused columns and get real valued data inside dicts from encoded columns """
 		dataframe = dataframe[["artist", "album", "name", "date"]]
-		
+		dataframe = dataframe.rename(columns={"date": "date_played", "name": "track"})
+	
 		dataframe = dataframe.map(lambda col: col["#text"] if self._is_dict_encoded(col) else col)
 		
-		dataframe["date"] = format_date_column(dataframe["date"])
-		dataframe = add_hour_column(dataframe, "date")
-		dataframe = dataframe.rename(columns={"date": "date_played", "name": "track"})
+		dataframe["date_played"] = format_date_column(dataframe["date_played"])
+		dataframe = add_hour_column(dataframe, "date_played")
 		
 		return dataframe
 	
@@ -137,4 +137,3 @@ class LastFmConnection:
 	@staticmethod
 	def _is_dict_encoded(value: str | dict) -> bool:
 		return True if type(value) is dict else False
-	

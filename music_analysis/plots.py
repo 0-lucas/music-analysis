@@ -1,7 +1,7 @@
 import pandas as pd
 from scipy.signal import periodogram
 import matplotlib.pyplot as plt
-
+import plotly.express as px
 
 def plot_periodogram(ts: pd.Series, detrend='linear', ax=None):
 	fs = pd.Timedelta("365D") / pd.Timedelta("1D")

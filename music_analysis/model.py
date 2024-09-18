@@ -48,7 +48,7 @@ class CustomMusicModel(BaseEstimator, RegressorMixin):
 	
 	@staticmethod
 	def __fit_inner_model(dp: DeterministicProcess, target: pd.Series, model) -> None:
-		""" Helper function to fit models depending on algorithm and deterministic process """
+		""" Helper function to fit models depending on algorithm and deterministic process   """
 		model.fit(dp.in_sample(), target)
 	
 	def fit(self, time_series: pd.Series):

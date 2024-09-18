@@ -33,3 +33,15 @@ def _get_music_time_series(data: pd.DataFrame, frequency: str) -> pd.Series:
 		pd.Grouper(freq=frequency)).agg({"artist": "nunique", "album": "nunique", "track": "count"})
 	
 	return data
+
+
+def process_data_to_polar_plot(data: pd.DataFrame) -> pd.DataFrame:
+	if "hour_played" not in data.columns:
+		data = add_hour_column(data, "date_played")
+	
+	data = data.groupby("hour_played").count()
+	data = data["track"].reset_index()
+	data["r"] = (data["hour_played"] / 24) * 360
+	data["am_pm"] = data["hour_played"].apply(lambda x: "AM" if x < 12 else "PM")
+	
+	return data
